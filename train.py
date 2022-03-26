@@ -90,7 +90,7 @@ def train(rank, params, traffic_light, counter, shared_model, shared_grad_buffer
                 actions.append(action)
                 values.append(v)
                 env_action = action.data.squeeze().numpy()
-                state, reward, done, _ = env.step(env_action)
+                state, reward, done, _ = env.step([env_action])
                 done = (done or episode_length >= params.max_episode_length)
                 cum_reward += reward
                 reward = max(min(reward, 1), -1)

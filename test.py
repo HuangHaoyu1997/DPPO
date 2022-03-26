@@ -49,7 +49,8 @@ def test(rank, params, shared_model, shared_obs_stats, test_n):
         eps = torch.randn(mu.size())
         action = mu + sigma_sq.sqrt()*Variable(eps)
         env_action = action.data.squeeze().numpy()
-        state, reward, done, _ = env.step(env_action)
+        # print(env_action)
+        state, reward, done, _ = env.step([env_action])
         reward_sum += reward
 
         if done:
