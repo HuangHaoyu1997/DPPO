@@ -164,6 +164,7 @@ def train(rank, params, traffic_light, counter, shared_model, shared_grad_buffer
             model_old.load_state_dict(model.state_dict())
             # prepare for step
             print(total_loss)
+            # with torch.autograd.set_detect_anomaly(True):
             total_loss.backward(retain_graph=True)
             #ensure_shared_grads(model, shared_model)
             #shared_model.cum_grads()

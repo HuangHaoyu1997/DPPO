@@ -14,7 +14,7 @@ from train import train
 from test import test
 from chief import chief
 from utils import TrafficLight, Counter
-torch.autograd.set_detect_anomaly(True)
+# 
 
 class Params():
     def __init__(self):
@@ -27,13 +27,13 @@ class Params():
         self.num_epoch = 10
         self.num_steps = 1000
         self.exploration_size = 1000
-        self.num_processes = 1
+        self.num_processes = 4
         self.update_treshold = self.num_processes - 1
         self.max_episode_length = 10000
         self.seed = 1
         # self.env_name = 'InvertedPendulum-v1'
         #self.env_name = 'Reacher-v1'
-        self.env_name = 'Pendulum-v1'
+        self.env_name = 'Pendulum-v0'
         #self.env_name = 'Hopper-v1'
         #self.env_name = 'Ant-v1'
         #self.env_name = 'Humanoid-v1'
@@ -46,6 +46,7 @@ if __name__ == '__main__':
     env = gym.make(params.env_name)
     num_inputs = env.observation_space.shape[0]
     num_outputs = env.action_space.shape[0]
+    print(params.env_name,num_inputs,num_outputs)
     traffic_light = TrafficLight()
     counter = Counter()
 
@@ -61,14 +62,16 @@ if __name__ == '__main__':
 
     processes = []
     p = mp.Process(target=test, args=(params.num_processes, params, shared_model, shared_obs_stats, test_n))
-    p.start()
+    # p.start()
     processes.append(p)
     p = mp.Process(target=chief, args=(params.num_processes, params, traffic_light, counter, shared_model, shared_grad_buffers, optimizer))
-    p.start()
+    # p.start()
     processes.append(p)
     for rank in range(0, params.num_processes):
         p = mp.Process(target=train, args=(rank, params, traffic_light, counter, shared_model, shared_grad_buffers, shared_obs_stats, test_n))
-        p.start()
+        # p.start()
         processes.append(p)
+    for p in processes:
+        p.start()
     for p in processes:
         p.join()
